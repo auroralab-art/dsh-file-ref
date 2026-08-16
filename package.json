@@ -2,7 +2,7 @@
   "name": "dsh-file-ref",
   "version": "0.1.0",
   "description": "Paste or drop a local file into the DSH composer as @workspace-relative or an absolute path",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
