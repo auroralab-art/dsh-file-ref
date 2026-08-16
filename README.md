@@ -19,7 +19,7 @@ Before a step, the host confirms each `@relative` path still exists and injects:
 <workspace-reference path="docs/spec.pdf" kind="file" />
 ```
 
-Absolute paths stay as typed. The agent reads them with the session's usual tools and access mode.
+Absolute paths stay as typed. The plugin does not open the file or send its bytes. The agent reads the path with the session's usual tools and access mode.
 
 ## What it adds
 
@@ -33,18 +33,43 @@ Without this plugin, the composer accepts only PNG, JPEG, WebP, and GIF. Other f
 
 There is no new upload API and no extra model-facing file tool.
 
-## Install
+## Install or Update
+
+Requires the `dsh` CLI and the `web` profile.
 
 ```sh
-git clone https://github.com/auroralab-art/dsh-file-ref.git
-cd dsh-file-ref
-pnpm install && pnpm run build
-dsh plugin --profile web add "$PWD"
+dsh plugin --profile web add https://github.com/auroralab-art/dsh-file-ref/releases/download/v0.1.0/dsh-file-ref-0.1.0.tgz
 ```
 
-Restart `dsh web` and hard-refresh the browser.
+Use the same command to update an existing installation. Restart `dsh web` and hard-refresh the browser so the host and the client both load `0.1.0`.
 
-Optional config on the plugin row (`inboxDir`, `maxStageBytes`) lives in `cordis.patch.yml`.
+```sh
+dsh plugin --profile web remove dsh-file-ref
+```
+
+## Configuration
+
+Optional keys go in `~/.dsh/profiles/web/cordis.patch.yml`. A later layer replaces the whole `config` object, so restate every key you set.
+
+```yaml
+- id: dsh-file-ref
+  config:
+    inboxDir: .dsh-inbox
+    maxStageBytes: 20971520
+```
+
+- `inboxDir` — workspace-relative directory for copies when the browser hides the original path. Default `.dsh-inbox`.
+- `maxStageBytes` — maximum size of one staged copy. Default `20971520` (20 MiB).
+
+## Path handling
+
+- Paste and drop of PNG, JPEG, WebP, and GIF stay on the first-party image rail.
+- A path inside the workspace is inserted as `@relative`. A path outside the workspace is inserted as absolute text.
+- When the browser hides the filesystem path, the host writes a copy under `inboxDir` and the draft `@`s that relative path.
+- Reference markers are created only from `@relative` tokens that still exist inside the workspace.
+- Absolute paths stay as typed. The plugin does not rewrite them into mentions.
+- File format does not change this flow. A staged copy must be within `maxStageBytes`.
+- DSH `read` opens UTF-8 text. Other formats use the session's shell or other tools.
 
 ## Aurora Lab
 
@@ -62,4 +87,9 @@ You may download and install this software for personal, non-commercial use. Con
 pnpm install
 pnpm test
 pnpm run build
+dsh plugin --profile web add "$PWD"
 ```
+
+`add "$PWD"` links this checkout into the profile. Keep the directory. That is the development path, not the install command for other machines.
+
+The build expects a `deepseek-harness` checkout at `../../deepseek-harness`, or `DSH_CHECKOUT`.
