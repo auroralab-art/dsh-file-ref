@@ -1,0 +1,7 @@
+# Mount the file-ref host plugin. The browser half loads from dsh.client.
+- insert:
+    - id: dsh-file-ref
+      name: dsh-file-ref
+      config:
+        inboxDir: .dsh-inbox
+        maxStageBytes: 20971520
