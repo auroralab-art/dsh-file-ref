@@ -1,7 +1,7 @@
 {
   "name": "dsh-file-ref",
   "version": "0.1.0",
-  "description": "Paste or drop a local file into the DSH composer as @workspace-relative or an absolute path",
+  "description": "DeepSeek Harness plugin: drag-and-drop file attachment — paste or drop any local file into the DSH web composer as an @workspace path reference",
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "main": "lib/index.js",
